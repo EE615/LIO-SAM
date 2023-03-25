@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(lio_sam)
 
 set(CMAKE_BUILD_TYPE "Release")
-set(CMAKE_CXX_FLAGS "-std=c++11")
+set(CMAKE_CXX_FLAGS "-std=c++14")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Wall -g -pthread")
 
 find_package(catkin REQUIRED COMPONENTS
@@ -19,6 +19,7 @@ find_package(catkin REQUIRED COMPONENTS
   nav_msgs
   message_generation
   visualization_msgs
+  fast_gicp
 )
 
 find_package(OpenMP REQUIRED)
@@ -26,6 +27,8 @@ find_package(PCL REQUIRED QUIET)
 find_package(OpenCV REQUIRED QUIET)
 find_package(GTSAM REQUIRED QUIET)
 find_package(Boost REQUIRED COMPONENTS timer)
+find_package(GTest REQUIRED QUIET)
+
 
 add_message_files(
   DIRECTORY msg
@@ -47,6 +50,9 @@ generate_messages(
   sensor_msgs
 )
 
+set(GTSAM_INCLUDE_DIRS "/usr/local/include/gtsam")
+set(GTSAM_LIBRARIES "/usr/local/lib/")
+
 catkin_package(
   INCLUDE_DIRS include
   DEPENDS PCL GTSAM
@@ -59,6 +65,7 @@ catkin_package(
   message_runtime
   message_generation
   visualization_msgs
+  fast_gicp
 )
 
 # include directories
@@ -101,3 +108,6 @@ target_link_libraries(${PROJECT_NAME}_mapOptmization Boost::timer ${catkin_LIBRA
 # IMU Preintegration
 add_executable(${PROJECT_NAME}_imuPreintegration src/imuPreintegration.cpp)
 target_link_libraries(${PROJECT_NAME}_imuPreintegration Boost::timer ${catkin_LIBRARIES} ${PCL_LIBRARIES} ${OpenCV_LIBRARIES} gtsam)
+
+add_executable(gicp_test src/testGICP.cpp)
+target_link_libraries(gicp_test ${GTEST_LIBRARIES} ${PCL_LIBRARIES} ${catkin_LIBRARIES})

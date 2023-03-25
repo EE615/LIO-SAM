@@ -1,20 +1,16 @@
 <launch>
 
     <arg name="project" default="lio_sam"/>
-    
+
+    <node pkg="lio_sam" type="record_liosam_gt.py" name="record_liosam_gt"/>
+
     <!-- Parameters -->
     <rosparam file="$(find lio_sam)/config/params.yaml" command="load" />
 
     <!--- LOAM -->
     <include file="$(find lio_sam)/launch/include/module_loam.launch" />
 
-    <!--- Robot State TF -->
-    <include file="$(find lio_sam)/launch/include/module_robot_state_publisher.launch" />
 
-    <!--- Run Navsat -->
-    <include file="$(find lio_sam)/launch/include/module_navsat.launch" />
-
-    <!--- Run Rviz-->
-    <include file="$(find lio_sam)/launch/include/module_rviz.launch" />
+    <node pkg="rosbag" type="play" name="bag_play" args="/home/q/dataset/2011_09_30_drive_0028.bag --clock -d 5 -r 2.0"/>
 
 </launch>
